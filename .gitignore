@@ -1,5 +1,6 @@
 # Dataset
-data/*.csv
+data/raw/*.csv
+data/processed/*.csv
 
 # Python
 __pycache__/
