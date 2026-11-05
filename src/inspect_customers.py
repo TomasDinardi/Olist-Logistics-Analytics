@@ -1,11 +1,22 @@
+
 import pandas as pd
 
 pd.set_option("display.max_columns", None)
 
-customers = pd.read_csv("data/raw/olist_customers_dataset.csv")
+customers = pd.read_csv(
+    "data/raw/olist_customers_dataset.csv",
+    dtype={"customer_zip_code_prefix": "string"}
+)
 
+print("Primeros 5 registros:")
 print(customers.head())
+
+print("\nInformación general:")
 customers.info()
+
+print("\nCantidad de valores faltantes por columna:")
+print(customers.isnull().sum())
+
 
 print("\nCantidad de customer_id duplicados:")
 print(customers["customer_id"].duplicated().sum())
@@ -36,10 +47,15 @@ print("\nCantidad de códigos postales distintos:")
 print(customers["customer_zip_code_prefix"].nunique())
 
 print("\nCantidad de códigos postales iguales a cero:")
-print((customers["customer_zip_code_prefix"] == 0).sum())
+print((customers["customer_zip_code_prefix"] == "00000").sum())
 
 print("\nCantidad de códigos postales negativos:")
-print((customers["customer_zip_code_prefix"] < 0).sum())
+print(customers["customer_zip_code_prefix"].str.startswith("-").sum())
+
+print("\nPrefijos con formato distinto de cinco dígitos:")
+print(
+    (~customers["customer_zip_code_prefix"].str.fullmatch(r"\d{5}")).sum()
+)
 
 print("\nCódigos postales más frecuentes:")
 print(customers["customer_zip_code_prefix"].value_counts().head(10))
@@ -81,5 +97,5 @@ orders = pd.read_csv("data/raw/olist_orders_dataset.csv")
 print("\nCantidad de customer_id de orders que no existen en customers:")
 print((~orders["customer_id"].isin(customers["customer_id"])).sum())
 
-print("\nCantidad de customer_id de customers que no existen en orders:")#
+print("\nCantidad de customer_id de customers que no existen en orders:")
 print((~customers["customer_id"].isin(orders["customer_id"])).sum())
